@@ -2,9 +2,9 @@
 sfrmat5 algorithm updated with masking, contrast, angle and clipping.
 
 # Test Edges (TIF format):
-![horizontal edge](https://github.com/danieleceUL/nssfr_sfrmat5/blob/main/test_images/h_edge.tif)
+![horizontal edge](https://github.com/danieleceUL/nssfr_sfrmat5/blob/main/test_images/h_edge.png)
 
-![vertical edge](https://github.com/danieleceUL/nssfr_sfrmat5/blob/main/test_images/h_edge.tif)
+![vertical edge](https://github.com/danieleceUL/nssfr_sfrmat5/blob/main/test_images/h_edge.png)
 
 # Test Results
 ![horizontal edge](https://github.com/danieleceUL/nssfr_sfrmat5/blob/main/test_results/h_edge_meas.png)
