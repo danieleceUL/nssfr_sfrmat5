@@ -1,5 +1,5 @@
 function [status, dat, e,freqval, fitme, lsf, nbin, del2, Con, ...
-    Angle, Clip, ESF] = sfrmat5(io, del, a, mask, npol, wflag, weight)
+    Angle, Clip, esf] = sfrmat5(io, del, a, mask, npol, wflag, weight)
 % MatLab function: sfrmat5 (v1) ISO 12233 4th editincolon: Slanted-edge analysis
 %                               with polynomial edge fitting, 
 % [status, dat, e, fitme, esf, nbin, del2] = sfrmat5(io, del, a, npol, wflag, weight);
@@ -40,7 +40,7 @@ function [status, dat, e,freqval, fitme, lsf, nbin, del2, Con, ...
 %               data file, fitme is a (npol+1 x 3) array, with the last column
 %               being the color misregistration value (with green as 
 %               reference).
-%       esf  =  supersampled edge-profile array
+%       lsf  =  line spread function
 %       nbin = binning factor used
 %       del2 = sampling interval for esf, from which the SFR spatial
 %              frequency sampling is was computed. This will be 
@@ -48,6 +48,7 @@ function [status, dat, e,freqval, fitme, lsf, nbin, del2, Con, ...
 %       Con  = Contrast of edge - OvZ 2023
 %       Angle= Angle of edge (deg)  - OvZ 2023
 %       Clip = Is clipping detected? (1/0)  - OvZ 2023
+%       esf = supersampled edge-profile array
 % NOTE: The edge feature used for e-SFR analysis should cross either both the 
 %       top and bottom, or both the left and right margins of the Region
 %       of Intertest (ROI).
@@ -201,7 +202,7 @@ switch nargin
        end
       roiClass=a;
       a = double(a);
-      if isempty(weight) || weight == 0
+      if isempty(weight) || all(weight ==0)
          weight = guidefweight;
       end
       alpha = defalpha;
@@ -416,7 +417,7 @@ for color=1:ncol                      % Loop for each color
         Con = [];
         Angle=[];
         Clip=[];
-        ESF=[];
+        esf=[];
         return
     end
     c=c.*mask; 
@@ -453,7 +454,7 @@ for color=1:ncol                      % Loop for each color
                 Con = [];
                 Angle=[];
                 Clip=[]; 
-                ESF=[];
+                esf=[];
                 return
             end
             win2 = tukey2(npix, alpha, place(n));
@@ -471,7 +472,7 @@ for color=1:ncol                      % Loop for each color
                 Con = [];
                 Angle=[];
                 Clip=[]; 
-                ESF=[];
+                esf=[];
                 return
              end
              % This step makes the edge finding more stable
@@ -603,7 +604,7 @@ end  % ncol>2
         Con = [];
         Angle=[];
         Clip=[];
-        ESF=[];
+        esf=[];
         return
     end
     a = a(1:nlin1, :, 1:ncol);           
@@ -697,8 +698,8 @@ for color=1:ncol
     end 
 
 % 8. Apply window to edge-derivative (LSF)
-    c = win.*c(:);  
-    
+    c = win.*c(:);
+    lsf = c;
     if pflag ==1
         figure;
         plot(c); hold on,

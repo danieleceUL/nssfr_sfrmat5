@@ -21,7 +21,9 @@ a = getroi(total);
 % Default window, luminance weighting
 mask = zeros (size(a(:,:,1)))+1;
 
-[status, dat1, e, freqval] = sfrmat5(io, del,a, mask, npol, wflag, weight);
+%[status, dat1, e, freqval] = sfrmat5(io, del,a, mask, npol, wflag, weight);
+[status, dat1, e, freqval] =...
+                    sfrmat5(1, 1, a, mask, npol, 0, [.299, .587, .114]); %using tukey window and default weight
 
 figure, plot(dat1(:,1),dat1(:,end))
 xlabel('Frequency, cy/pixel')
