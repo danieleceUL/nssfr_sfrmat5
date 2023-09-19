@@ -1,4 +1,4 @@
-function [point, status] = project2(bb, fitme, fac)
+function [point, status] = project2M(bb, mask, fitme, fac)
 % [point, status] = project2(bb, fitme, fac)
 % Projects the data in array bb along the direction defined by
 %  npix = (1/slope)*nlin.  Used by sfrmat3, sfrmat4 functions.
@@ -25,6 +25,9 @@ function [point, status] = project2(bb, fitme, fac)
 status =0;
 [nlin, npix]=size(bb);
 
+mask = double(mask);
+mask(mask == 0) = NaN;
+
 if nargin<3
  fac = 4 ;
 end
@@ -34,7 +37,7 @@ slope = fitme(end-1);
 nn = floor(npix *fac) ;
 
  slope =  1/slope;
-  offset =  round(  fac*  (0  - (nlin - 1)/slope )   );
+ offset =  round(  fac*  (0  - (nlin - 1)/slope )   );
 
  del = abs(offset);
  if offset>0
@@ -42,7 +45,9 @@ nn = floor(npix *fac) ;
  end
  bwidth = nn + del+150;
  barray = zeros(2, bwidth);  %%%%%
- 
+ % 13 Jan. 2020 following suggestion by Rowin Zhuang
+ theta = atan(slope);
+
  % Projection and binning
  p2 = zeros(nlin,1);
  
@@ -64,7 +69,7 @@ for n=1:npix
            ling = bwidth;
         end
         barray(1,ling) = barray(1,ling) + 1;
-        barray(2,ling) = barray(2,ling) + bb(m,n);
+        barray(2,ling) = barray(2,ling) + (bb(m,n)*mask(m,n));
     end
 end
 
@@ -103,5 +108,10 @@ end
  for i = 0:nn-1 
   point(i+1) = barray(2, i+start)/ barray(1, i+start);
  end
+% OvZ addaption, fill in NaNs
+validIndices = find(~isnan(point));
+point(1:(min(validIndices)),1)=point(min(validIndices),1);
+point((max(validIndices)):end,1)=point(max(validIndices),1);
+
 point = point';   % 4 Nov. 2019
 return

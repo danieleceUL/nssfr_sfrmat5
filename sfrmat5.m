@@ -40,7 +40,7 @@ function [status, dat, e,freqval, fitme, lsf, nbin, del2, Con, ...
 %               data file, fitme is a (npol+1 x 3) array, with the last column
 %               being the color misregistration value (with green as 
 %               reference).
-%       lsf  =  line spread function
+%       lsf  =  supersampled line spread function - OvZ 2023
 %       nbin = binning factor used
 %       del2 = sampling interval for esf, from which the SFR spatial
 %              frequency sampling is was computed. This will be 
@@ -668,8 +668,45 @@ end
 % 6. Form super-sampled edge profile by shifting and binning
 for color=1:ncol
     % project and bin data in 4x sampled array
-    [esf, status] = project2(a(:,:,color), fitme(color,:), nbin);
+    [esf, status] = project2(a(:,:,color), mask, fitme(color,:), nbin);
+    if isempty(esf)
+        status=[];
+        dat=[];
+        e=[];
+        freqval=[];
+        %sfr50=[];
+        fitme=[];
+        lsf=[];
+        nbin=[];
+        del2=[];
+        Con = [];
+        Angle=[];
+        Clip=[];
+        esf=[];
+        return
+    end
     esf = esf(:);
+
+    % OvZ 2023
+%     esf = esf(~isnan(esf));
+        %%%%%%%%%
+    emp=isempty(esf);
+    if emp==1
+        status=[]; 
+        dat=[];
+        e=[];
+        freqval=[];
+        %sfr50=[];
+        fitme=[]; 
+        lsf=[]; 
+        nbin=[]; 
+        del2=[];
+        Con = [];
+        Angle=[];
+        Clip=[];
+        esf=[];
+        return
+    end
 
 % 7. Compute 1-D derivative of super-sampled edge data
 
@@ -699,7 +736,7 @@ for color=1:ncol
 
 % 8. Apply window to edge-derivative (LSF)
     c = win.*c(:);
-    lsf = c;
+    lsf=c; % OvZ 2023
     if pflag ==1
         figure;
         plot(c); hold on,
