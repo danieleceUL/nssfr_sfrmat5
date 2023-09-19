@@ -25,4 +25,4 @@ For more information see:
 - [sfrmat5](#http://burnsdigitalimaging.com/software/sfrmat/iso12233-sfrmat5/)
 
 ## Major changes include
-Capacity to read in masked areas of a natural scene. Fully tested under conditions:
+Capacity to read in masked areas of a natural scene. Tested under conditions of a test chart as shown above.
