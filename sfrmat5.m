@@ -528,17 +528,17 @@ for color=1:ncol                      % Loop for each color
         [r2, rmse, merror] = rsquare(y,loc(color,:));
         disp(['mean error: ',num2str(merror)]);
         disp(['r2: ',num2str(r2),' rmse: ',num2str(rmse)])
-        diff = loc(color,:)-y; 
+        Dif = loc(color,:)-y; 
         
         figure
-        plot(diff,x,'*');
+        plot(Dif,x,'*');
         xlabel('Residual, pixel'),ylabel('line');
         hold on
         plot([0,0],[0,nlin],'k--')
         axis ij
         axis([-10 10 0 nlin])
         figure
-        histogram(diff,15,'Normalization','probability');
+        histogram(Dif,15,'Normalization','probability');
          xlabel('Residual, pixel'),ylabel('Frequency, prob.');
         
                     
@@ -747,6 +747,33 @@ for color=1:ncol
     end
 % 9. Compute normalized modulus of the DFT of the windowed LSF   
 %    Transform, scale and correct for FIR filter response
+
+    % OvZ added if statement for due to nan vales in the ESF causing nn2 to
+    % be bigger than nn
+    if nn2>nn
+        nn2=nn;
+    end
+    % Interpolate out NaN values - OvZ 2023
+    if sum(isnan(c))==size(c,1)
+        status=[]; 
+        dat=[];
+        e=[];
+        freqval=[];
+        %sfr50=[];
+        fitme=[]; 
+        lsf=[]; 
+        nbin=[]; 
+        del2=[];
+        Con = [];
+        Angle=[];
+        Clip=[];
+        esf=[];
+        return
+    elseif sum(isnan(c))>=1
+        Cnan = ~isnan(c);
+        cnan = cumsum(Cnan-diff([1;Cnan])/2);
+        c=interp1(1:nnz(Cnan),c(Cnan,1),cnan);
+    end
     temp = abs(fft(c, nn));
     mtf(1:nn2, color) = temp(1:nn2)/temp(1);
     

@@ -34,7 +34,7 @@ end
 
 slope = fitme(end-1);
 
-nn = floor(npix *fac) ;
+nn = npix *fac ;
 
  slope =  1/slope;
  offset =  round(  fac*  (0  - (nlin - 1)/slope )   );
