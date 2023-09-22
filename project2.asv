@@ -34,15 +34,12 @@ end
 
 slope = fitme(end-1);
 
-slope =  1/slope;
-
 if abs(slope) < 0.01
-    slope = round(slope)
-end
+    slope
 
 % Adjusted by OvZ (2020) due to obtaining incorrect ROIs in natural 
  % scenes, causing bwidth=NaN
- if slope == 0
+ if round(slope) == 0
      point = [];
      status = [];
      return
@@ -50,6 +47,7 @@ end
 
 nn = npix *fac ;
 
+ slope =  1/slope;
  offset =  round(  fac*  (0  - (nlin - 1)/slope )   );
 
  del = abs(offset);
