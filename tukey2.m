@@ -28,6 +28,11 @@ m3 = n-mid;
 mm = max(m2,m3);
 n2 = 2*mm;
 n2 = round(n2);
+% Remove large error fron natural scene edges
+if n2>500
+    w=NaN;
+    return
+end
 
 w = tukey(n2, alpha);
 

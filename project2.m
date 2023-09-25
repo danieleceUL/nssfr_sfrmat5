@@ -34,22 +34,9 @@ end
 
 slope = fitme(end-1);
 
-slope =  1/slope;
-
-if abs(slope) < 0.01
-    slope = round(slope)
-end
-
-% Adjusted by OvZ (2020) due to obtaining incorrect ROIs in natural 
- % scenes, causing bwidth=NaN
- if slope == 0
-     point = [];
-     status = [];
-     return
- end
-
 nn = npix *fac ;
 
+ slope =  1/slope;
  offset =  round(  fac*  (0  - (nlin - 1)/slope )   );
 
  del = abs(offset);
@@ -58,10 +45,18 @@ nn = npix *fac ;
  end
  bwidth = nn + del+150;
  
+ % Adjusted by OvZ (2020) due to obtaining incorrect ROIs in natural 
+ % scenes, causing bwidth=NaN OR exceeds memory array size 
+ if isnan(bwidth) || bwidth>100000
+     point = [];
+     status = [];
+     return
+ end
+ 
  barray = zeros(2, bwidth);  %%%%%
  % 13 Jan. 2020 following suggestion by Rowin Zhuang
  theta = atan(slope);
-
+ 
  % Projection and binning
  p2 = zeros(nlin,1);
  
